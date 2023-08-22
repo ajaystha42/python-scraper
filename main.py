@@ -31,7 +31,8 @@ def main():
     url = 'https://www.linkedin.com/company'
     for company in companies:
         try:
-            print(f'Fetching Job Informations for Company : {company}')
+            print(
+                f'Fetching Job Informations for : {company.capitalize()}')
             # driver.get(f'https://www.linkedin.com/company/{company}/jobs/')
             driver.get(f'{url}/{company}/')
 
