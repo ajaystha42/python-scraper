@@ -1,7 +1,7 @@
 from selenium.webdriver.common.by import By
 import re
 import pandas as pd
-import webdriver
+import config
 import jobs_importer
 import job_scraper
 '''
@@ -25,7 +25,7 @@ companies = ['netflix', 'fusemachines',
 
 
 def main():
-    driver = webdriver.setup_driver()
+    driver = config.setup_driver()
     total_jobs = list()
     url = 'https://www.linkedin.com/company'
     for company in companies:
