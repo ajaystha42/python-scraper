@@ -4,23 +4,6 @@ import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 
-companies = ['Netflix', 'Fusemachines']
-
-'''
-Url 1 : https://www.linkedin.com/jobs/search?keywords=Netflix&location=&geoId=&f_TPR=r604800&trk=public_jobs_jobs-search-bar_search-submit&position=1&pageNum=0
-
-f_TPR for past 1 week results - can be hardcoded
-f_C - for company - needs to be DYNAMIC 
-Filtered Url 1 = https://www.linkedin.com/jobs/search?keywords=&location=&geoId=&position=1&pageNum=0&f_C=165158&f_TPR=r604800
-
-Enhanced Url 1 = https://www.linkedin.com/jobs/search?position=1&pageNum=0&f_C=165158&f_TPR=r604800&geoId=92000000
-in jobs page of each company, theres a See All Jobs where we can find f_c (company_id)from where we can search
-for apis directly in filtered url 1
-
-geoId=92000000 for WORLDWIDE
-by default USA
-
-'''
 
 # Take f_C from selenium_beautiful_soup.py
 # company_code = 165158
@@ -29,7 +12,7 @@ by default USA
 # base_target_url = 'https://www.linkedin.com/jobs/netflix-jobs-worldwide?keywords=Netflix&location=Worldwide&locationId=&geoId=92000000&f_TPR=r604800&f_C=165158&position=1&pageNum=0'
 
 
-def import_jobs(company_code):
+def import_jobs(company_code, jobids):
     # Using Enhanced URL 1
     base_target_url = f'https://www.linkedin.com/jobs/search?position=1&pageNum=0&f_C={company_code}&f_TPR=r604800&geoId=92000000'
     main_res = requests.get(base_target_url)
@@ -40,7 +23,7 @@ def import_jobs(company_code):
         total_jobs_text = total_jobs_span.get_text()
         total_jobs_count = ''.join(filter(str.isdigit, total_jobs_text))
         print('Total jobs count:', total_jobs_count)
-        jobids = set()
+        # jobids = set()
         n = pd.to_numeric(total_jobs_text)
         query_params = base_target_url.split('?')[1]
         linked_in_job_search_url = f'https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?{query_params}'
@@ -63,7 +46,7 @@ def import_jobs(company_code):
         job_details = []
         for id in jobids:
             obj = {}
-            print(f'Fetching info for job id = {id}')
+            print(f'Fetching info for job id : {id}')
             obj['job_id'] = id
             job_url = f'https://www.linkedin.com/jobs-guest/jobs/api/jobPosting/{id}'
             # job_url = f'https://www.linkedin.com/jobs/view/{id}'
@@ -103,9 +86,11 @@ def import_jobs(company_code):
                     print('organization not found')
             else:
                 print('title not found')
-
+        # jobids = []
+        # update in db
         df = pd.DataFrame(job_details)
-        df.to_csv('linkedinjobs_scraping.csv', index=False, encoding='utf-8')
+        df.to_csv(f'jobs_{company_code}_scraping.csv',
+                  index=False, encoding='utf-8')
         print(len(job_details), ' jobs imported.')
     else:
         print('Total jobs span not found.')
