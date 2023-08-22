@@ -1,8 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
+import time
 
 
-def fetch_job_infos(jobs):
+def fetch_job_infos(jobs, session):
     job_details = []
     link_url = 'https://www.linkedin.com/jobs/view/'
 
@@ -12,12 +13,20 @@ def fetch_job_infos(jobs):
         obj['job_id'] = id
         job_url = f'https://www.linkedin.com/jobs-guest/jobs/api/jobPosting/{id}'
         # job_url = f'https://www.linkedin.com/jobs/view/{id}'
-        res = requests.get(job_url)
-        print('ress:::: ', res.status_code)
+        # res = requests.get(job_url)
         # Bright Data Configuration
         # session = config.setup_requests()
         # res = session.get(target_url)
-        if res.status_code == 200:
+        try:
+            res = session.get(job_url)
+            if res.status_code == 429:
+                # If you receive a 429 status code, sleep for a while before retrying
+                # Default to 5 seconds
+                # wait_time = int(res.headers.get('Retry-After', '5'))
+                time.sleep(5)
+            else:
+                # Raise an exception for non-2xx res
+                res.raise_for_status()
             soup = BeautifulSoup(res.text, 'html.parser')
             title = soup.find(
                 'h2', class_='top-card-layout__title')
@@ -52,6 +61,6 @@ def fetch_job_infos(jobs):
                     print('organization not found')
             else:
                 print('title not found')
-        else:
-            print('Failed to fetch the page.')
+        except requests.exceptions.RequestException as e:
+            print("Error:", e)
     return job_details

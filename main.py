@@ -26,6 +26,7 @@ companies = ['netflix', 'fusemachines',
 
 def main():
     driver = config.setup_driver()
+    session = config.setup_requests()
     total_jobs = list()
     url = 'https://www.linkedin.com/company'
     for company in companies:
@@ -45,16 +46,18 @@ def main():
             if company_tag:
                 if match:
                     f_c_value = match.group(1)
-                    jobids = jobs_importer.import_jobs(f_c_value)
-                    total_jobs.append(jobids)
+                    jobids = jobs_importer.import_jobs(f_c_value, session)
+                    if len(jobids) > 0:
+                        total_jobs.append(jobids)
             else:
                 print('No See Jobs Element')
         except:
             print(f'No jobs for {company}')
-    jobs = [
-        element for inner_array in total_jobs for element in inner_array]
+    if len(total_jobs) > 0:
+        jobs = [
+            element for inner_array in total_jobs for element in inner_array]
 
-    job_details = job_scraper.fetch_job_infos(jobs)
+    job_details = job_scraper.fetch_job_infos(jobs, session)
     # jobids = []
     # update in db
     print(len(job_details))

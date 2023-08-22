@@ -5,6 +5,8 @@ from selenium.webdriver.chrome.service import Service
 
 import requests
 from bs4 import BeautifulSoup
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 PROXY_HOST = ''
 PROXY_USERNAME = ''
@@ -42,6 +44,17 @@ def setup_requests():
         "http": f"http://{PROXY_USERNAME}:{PROXY_PASSWORD}@{PROXY_HOST}:{str(PROXY_PORT)}",
         "https": f"https://{PROXY_USERNAME}:{PROXY_PASSWORD}@{PROXY_HOST}:{str(PROXY_PORT)}",
     }
+
+    retry_strategy = Retry(
+        total=3,  # Number of retries
+        # HTTP error codes to retry on
+        status_forcelist=[500, 502, 503, 504],
+        backoff_factor=0.5,  # Factor to increase delay between retries
+    )
+
     session = requests.Session()
-    session.proxies = proxies
+    # session.proxies = proxies
+    adapter = HTTPAdapter(max_retries=retry_strategy)
+    session.mount("http://", adapter)
+    session.mount("https://", adapter)
     return session
