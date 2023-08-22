@@ -19,12 +19,9 @@ geoId=92000000 for WORLDWIDE
 by default USA
 
 '''
-companies = ['fusemachines', 'netflix',
+companies = ['netflix', 'fusemachines',
              'warner-bros--entertainment', 'marvel-studios'
              ]
-
-# total_jobs = [['3698260330', '3701051286', '3691231651', '3698256616',
-#               '3698262028', '3698260328', '3698255995', '3698255996']]
 
 
 def main():
@@ -54,10 +51,8 @@ def main():
                 print('No See Jobs Element')
         except:
             print(f'No jobs for {company}')
-    print('totaljobssss  ', total_jobs)
     jobs = [
         element for inner_array in total_jobs for element in inner_array]
-    print('jobssss  ', jobs)
 
     job_details = job_scraper.fetch_job_infos(jobs)
     # jobids = []
