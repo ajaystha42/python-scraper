@@ -14,11 +14,13 @@ from selenium.webdriver.chrome.options import Options
 url1 = 'https://www.linkedin.com/jobs/search/?currentJobId=3674700593&f_C=165158&f_TPR=r604800&geoId=92000000'
 # 'https://www.linkedin.com/jobs/search/?currentJobId=3694026977&f_C=2920773&geoId=92000000&originToLandingJobPostings=3667404708%2C3669264653%2C3667153500%2C3668081092%2C3667156194%2C3668078267%2C3667812068%2C2825608196%2C3018262160&position=4&pageNum=0'
 #
-service = Service(executable_path='./chromedriver')
+# service = Service(executable_path='./chromedriver')
 options = Options()
-options.add_experimental_option("detach", True)
+# options.add_experimental_option("detach", True)
 
-driver = webdriver.Chrome(service=service, options=options)
+driver = webdriver.Chrome(
+    # service=service,
+    options=options)
 driver.implicitly_wait(10)
 driver.get(url1)
 
