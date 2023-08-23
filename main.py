@@ -61,10 +61,10 @@ def main():
     job_details = job_scraper.fetch_job_infos(jobs, session)
     # jobids = []
     # update in db
-    print(len(job_details))
     df = pd.DataFrame(job_details)
-    df.to_csv(f'linkedin_jobs.csv',
-              index=False, encoding='utf-8')
+    df.index = df.index + 1
+
+    df.to_csv(f'linkedin_jobs.csv', encoding='utf-8')
     print(len(job_details), ' jobs imported.')
 
 

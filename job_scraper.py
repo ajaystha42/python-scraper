@@ -60,7 +60,7 @@ def fetch_job_infos(jobs, session):
                 else:
                     print('organization not found')
             else:
-                print('title not found')
+                print(f'Title not found for Job Id: {id}')
         except requests.exceptions.RequestException as e:
             print("Error:", e)
     return job_details
