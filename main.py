@@ -36,11 +36,11 @@ def main():
             # driver.get(f'https://www.linkedin.com/company/{company}/jobs/')
             driver.get(f'{url}/{company}/')
 
-            modal_close_button = driver.find_element(
-                "xpath", "//button[@aria-label='Dismiss']")
-            if modal_close_button:
-                driver.execute_script(
-                    "arguments[0].click();", modal_close_button)
+            # modal_close_button = driver.find_element(
+            #     "xpath", "//button[@aria-label='Dismiss']")
+            # if modal_close_button:
+            #     driver.execute_script(
+            #         "arguments[0].click();", modal_close_button)
             company_tag = driver.find_element(
                 By.CLASS_NAME, "top-card-layout__cta").get_attribute('href')
             match = re.search(r'f_C=(\d+)', company_tag)
