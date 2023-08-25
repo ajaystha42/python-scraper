@@ -9,8 +9,10 @@ def fetch_job_infos(jobs, session):
 
     for id in jobs:
         obj = {}
+        data_arr = list()
+        id = str(id)
         print(f'Fetching info for job id : {id}')
-        obj['job_id'] = id
+        # obj['job_id'] = str(id)
         job_url = f'https://www.linkedin.com/jobs-guest/jobs/api/jobPosting/{id}'
         # job_url = f'https://www.linkedin.com/jobs/view/{id}'
         # res = requests.get(job_url)
@@ -32,12 +34,12 @@ def fetch_job_infos(jobs, session):
                 'h2', class_='top-card-layout__title')
             if title:
                 title = title.get_text().strip().upper()
-                obj['job_title'] = title
+                # obj['job_title'] = title
                 organization_name = soup.find(
                     'a', class_='topcard__org-name-link')
                 if organization_name:
                     company = organization_name.get_text().strip().upper()
-                    obj['company'] = company
+                    # obj['company'] = company
                     job_description = soup.find(
                         'div', class_='show-more-less-html__markup')
                     if job_description:
@@ -51,10 +53,16 @@ def fetch_job_infos(jobs, session):
                             # For testing
                             obj['description'] = 'JOB IMPORTED FROM LINKEDIN \n' + \
                                 company + '\n' + title + '\n' + job_description
-                            obj['link_url'] = link_url + id
-                            obj['image'] = image_url
-                            obj['linkedin_job_description'] = job_description
-                            job_details.append(obj)
+                            data_arr.append('JOB IMPORTED FROM LINKEDIN \n' +
+                                            company + '\n' + title + '\n' + job_description)
+                            data_arr.append(511)
+                            # data_arr.append(2)
+                            # obj['link_url'] = link_url + id
+                            # obj['image'] = image_url
+                            # obj['linkedin_job_description'] = job_description
+
+                            # job_details.append(obj)
+                            job_details.append(tuple(data_arr))
                     else:
                         print('job description not found')
                 else:

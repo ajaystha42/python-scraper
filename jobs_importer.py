@@ -40,7 +40,7 @@ def fetch_job_ids(total_jobs, query_params, session):
                     jobid = base_card.get('data-entity-urn')
                     if jobid is not None:
                         jobid = jobid.split(':')[3]
-                        job_ids.add(jobid)
+                        job_ids.add(int(jobid))
         except requests.exceptions.RequestException as e:
             print("Error:", e)
     return list(job_ids)
