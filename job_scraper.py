@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import time
+import json
 
 
 def fetch_job_infos(jobs, session):
@@ -52,10 +53,12 @@ def fetch_job_infos(jobs, session):
 
                             # For testing
                             obj['description'] = 'JOB IMPORTED FROM LINKEDIN \n' + \
-                                company + '\n' + title + '\n' + job_description
-                            data_arr.append('JOB IMPORTED FROM LINKEDIN \n' +
-                                            company + '\n' + title + '\n' + job_description)
-                            data_arr.append(511)
+                                company + '\n' + title + '\n' + job_description + '\n' + link_url + id
+                            data = 'JOB IMPORTED FROM LINKEDIN \n' + \
+                                company + '\n' + title + '\n' + job_description + '\n' + link_url + id
+                            data_arr.append(data)
+                            data_arr.append(json.dumps({'job_id': id}))
+                            # data_arr.append(511)
                             # data_arr.append(2)
                             # obj['link_url'] = link_url + id
                             # obj['image'] = image_url

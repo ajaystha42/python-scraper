@@ -21,16 +21,7 @@ DB_HOST = 'localhost'
 DB_PORT = 5432
 DB_USERNAME = 'postgres'
 DB_PASSWORD = 'Aj@y'
-DB_NAME = 'new_husslup'
-
-# FOR DEV DB
-# DB_HOST=husslup-db-dev.cycua6t8tsxn.us-west-1.rds.amazonaws.com
-# DB_PORT=5432
-# DB_USERNAME=postgres
-# DB_PASSWORD=I8FdvNpSyKfOdRWGDKZH
-# DB_NAME=husslup
-# DB_SYNCRONIZE=false
-# DB_LOGGING=true
+DB_NAME = 'husslup'
 
 
 def setup_driver():
