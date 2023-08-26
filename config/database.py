@@ -1,6 +1,10 @@
 import json
 
-FETCH_POSTS = 'select ext_properties from post where post."tagId" = 2'
+# FETCH_POSTS = 'select ext_properties from post where post."tagId" = 2'
+FETCH_POSTS = '''
+select "post"."ext_properties" from "post" where "post"."tagId" = 2 
+and "post"."ext_properties" is not null
+'''
 INSERT_JOB = '''
 INSERT INTO 
 "post"("post", "ext_properties", "postedById", "tagId") 
@@ -26,5 +30,8 @@ def fetch_posts(cursor):
 
 
 def insert_jobs(cursor, data):
-    cursor.executemany(INSERT_JOB, data)
-    print('All data inserted successfully.')
+    try:
+        cursor.executemany(INSERT_JOB, data)
+        print('All data inserted successfully.')
+    except Exception as e:
+        print('Exception ', e)

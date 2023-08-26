@@ -71,12 +71,14 @@ def main():
 
                 # inserting imported jobs in post table
                 database.insert_jobs(cursor, job_details)
+                database_conn.commit()
+
+                # Creating CSV File
                 # df = pd.DataFrame(job_details)
                 # df.index = df.index + 1
 
                 # df.to_csv(f'linkedin_jobs.csv', encoding='utf-8')
                 # print(len(job_details), ' jobs imported.')
-                # database_conn.commit()
 
                 cursor.close()
                 database_conn.close()

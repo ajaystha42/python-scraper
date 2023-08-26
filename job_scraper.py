@@ -9,14 +9,10 @@ def fetch_job_infos(jobs, session):
     link_url = 'https://www.linkedin.com/jobs/view/'
 
     for id in jobs:
-        obj = {}
         data_arr = list()
         id = str(id)
         print(f'Fetching info for job id : {id}')
-        # obj['job_id'] = str(id)
         job_url = f'https://www.linkedin.com/jobs-guest/jobs/api/jobPosting/{id}'
-        # job_url = f'https://www.linkedin.com/jobs/view/{id}'
-        # res = requests.get(job_url)
         # Bright Data Configuration
         # session = config.setup_requests()
         # res = session.get(target_url)
@@ -35,37 +31,58 @@ def fetch_job_infos(jobs, session):
                 'h2', class_='top-card-layout__title')
             if title:
                 title = title.get_text().strip().upper()
-                # obj['job_title'] = title
                 organization_name = soup.find(
                     'a', class_='topcard__org-name-link')
                 if organization_name:
                     company = organization_name.get_text().strip().upper()
-                    # obj['company'] = company
                     job_description = soup.find(
                         'div', class_='show-more-less-html__markup')
                     if job_description:
-                        job_description = job_description.get_text().strip()
+                        prettified_description = job_description.prettify()
 
-                        image = soup.find(
-                            'img', class_='artdeco-entity-image artdeco-entity-image--square-5')
-                        if image:
-                            image_url = image.get('data-delayed-url')
+                    #     # image = soup.find(
+                    #     #     'img', class_='artdeco-entity-image artdeco-entity-image--square-5')
+                    #     # if image:
+                    #     #     image_url = image.get('data-delayed-url')
 
-                            # For testing
-                            obj['description'] = 'JOB IMPORTED FROM LINKEDIN \n' + \
-                                company + '\n' + title + '\n' + job_description + '\n' + link_url + id
-                            data = 'JOB IMPORTED FROM LINKEDIN \n' + \
-                                company + '\n' + title + '\n' + job_description + '\n' + link_url + id
-                            data_arr.append(data)
-                            data_arr.append(json.dumps({'job_id': id}))
-                            # data_arr.append(511)
-                            # data_arr.append(2)
-                            # obj['link_url'] = link_url + id
-                            # obj['image'] = image_url
-                            # obj['linkedin_job_description'] = job_description
+                    #     #  Working
+                        desc_soup = BeautifulSoup(
+                            prettified_description, 'html.parser')
+                        print(desc_soup)
+                        for tag in desc_soup.find_all():
 
-                            # job_details.append(obj)
-                            job_details.append(tuple(data_arr))
+                            if tag.name != 'br':
+                                tag.unwrap()
+                        modified_text = desc_soup.get_text()
+                        lines = [line.strip() for line in modified_text.split(
+                            '\n') if line.strip()]
+                        collapsed_text = '\n'.join(lines)
+
+                        # Working till here
+
+                        # for br in desc_soup.find_all('br'):
+                        #     br.replace_with('\n\n')
+
+                        # # Remove <p> tags
+                        # for p in desc_soup.find_all('p'):
+                        #     p.extract()
+
+                        # modified_text = desc_soup.get_text()
+
+                        # lines = [line.strip() for line in modified_text.split(
+                        #     '\n') if line.strip()]
+                        # collapsed_text = '\n'.join(lines)
+                        formatted_title = f'Job Title : **{title}**'
+                        formatted_company = f'Company : **{company}**'
+                        formatted_linkedin_imported_text = f'***JOB IMPORTED FROM LINKEDIN***'
+
+                        data = formatted_linkedin_imported_text + '\n' + \
+                            formatted_company + '\n' + formatted_title + '\n' + \
+                            collapsed_text + '\n' + link_url + id
+                        data_arr.append(data)
+                        data_arr.append(json.dumps({'job_id': id}))
+                        # obj['image'] = image_url
+                        job_details.append(tuple(data_arr))
                     else:
                         print('job description not found')
                 else:
