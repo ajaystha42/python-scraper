@@ -7,6 +7,9 @@ import job_scraper
 import config.database as database
 from apscheduler.schedulers.blocking import BlockingScheduler
 
+
+from datetime import datetime, timedelta
+import pytz
 '''
 Url 1 : https://www.linkedin.com/jobs/search?keywords=Netflix&location=&geoId=&f_TPR=r604800&trk=public_jobs_jobs-search-bar_search-submit&position=1&pageNum=0
 
@@ -89,5 +92,18 @@ def main():
 
 if __name__ == "__main__":
     scheduler = BlockingScheduler()
-    scheduler.add_job(main, 'interval', minutes=5)  # Schedule every 5 minutes
+    main()
+    scheduler.add_job(main, 'interval', minutes=15)  # Schedule every 5 minutes
     scheduler.start()
+
+    # scheduler = BlockingScheduler(timezone=pytz.timezone('US/Eastern'))
+
+    # # Calculate the next 12 AM and 12 PM times in EST
+    # now = datetime.now(tz=pytz.timezone('US/Eastern'))
+    # next_12am = now.replace(hour=0, minute=0, second=0,
+    #                         microsecond=0) + timedelta(days=1)
+    # next_12pm = now.replace(hour=12, minute=0, second=0, microsecond=0)
+
+    # # Schedule the main function to run at 12 AM and 12 PM EST
+    # scheduler.add_job(main, 'date', run_date=next_12am)
+    # scheduler.add_job(main, 'date', run_date=next_12pm)

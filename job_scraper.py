@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import time
 import json
+import re
 
 
 def fetch_job_infos(jobs, session):
@@ -48,12 +49,23 @@ def fetch_job_infos(jobs, session):
                     #     #  Working
                         desc_soup = BeautifulSoup(
                             prettified_description, 'html.parser')
-                        print(desc_soup)
-                        for tag in desc_soup.find_all():
+                        # Find all non-br tags and extract their text
+                        text_parts = [
+                            tag.get_text() for tag in desc_soup.find_all() if tag.name != 'br']
 
-                            if tag.name != 'br':
-                                tag.unwrap()
-                        modified_text = desc_soup.get_text()
+                        # Join the extracted text parts and remove extra spaces
+                        # modified_text = re.sub(
+                        #     r'\s+', ' ', '\n\n'.join(text_parts))
+                        modified_text = '\n'.join(text_parts)
+
+                        # for tag in desc_soup.find_all():
+
+                        #     if tag.name != 'br':
+                        #         tag.unwrap()
+                        # modified_text = desc_soup.get_text()
+                        # print(desc_soup)
+                        # print(modified_text)
+                        # break
                         lines = [line.strip() for line in modified_text.split(
                             '\n') if line.strip()]
                         collapsed_text = '\n'.join(lines)
