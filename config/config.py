@@ -3,10 +3,6 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 
-import psycopg2
-from psycopg2 import Error
-
-
 import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
@@ -15,13 +11,6 @@ PROXY_HOST = ''
 PROXY_USERNAME = ''
 PROXY_PASSWORD = ''
 PROXY_PORT = 123
-
-# FOR LOCAL DB
-DB_HOST = 'localhost'
-DB_PORT = 5432
-DB_USERNAME = 'postgres'
-DB_PASSWORD = 'Aj@y'
-DB_NAME = 'husslup'
 
 
 def setup_driver():
@@ -68,19 +57,3 @@ def setup_requests():
     session.mount("http://", adapter)
     session.mount("https://", adapter)
     return session
-
-
-def create_connection():
-    try:
-        connection = psycopg2.connect(
-            host=DB_HOST,
-            dbname=DB_NAME,
-            user=DB_USERNAME,
-            password=DB_PASSWORD,
-            port=str(DB_PORT)
-        )
-        print("Connected to the database successfully")
-        return connection
-    except Error as e:
-        print(f"Error: {e}")
-        return None
