@@ -1,0 +1,13 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+**/__pycache__/
+**/migrations/__pycache__/
+*.py[cod]
+
+
+.DS_Store
+
+# C extensions
+*.so
+
+*.csv
