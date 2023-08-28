@@ -1,4 +1,13 @@
-import json
+import psycopg2
+from psycopg2 import Error
+
+# FOR LOCAL DB
+DB_HOST = 'localhost'
+DB_PORT = 5432
+DB_USERNAME = 'postgres'
+DB_PASSWORD = 'Aj@y'
+DB_NAME = 'husslup'
+
 
 # FETCH_POSTS = 'select ext_properties from post where post."tagId" = 2'
 FETCH_POSTS = '''
@@ -14,6 +23,22 @@ VALUES (%s, %s, 694, 2)
 # FETCH_POSTS = 'select job_id from post where post."tagId" = 2'
 # RETURNING id
 # RETURNING "post_id", "postAs", "whoLikes", "likesQty", "taggedUsers", "isDeleted", "createdAt", "postedById", "updatedAt", "reportReason", "isFreezed", "actionTakenBy"
+
+
+def create_connection():
+    try:
+        connection = psycopg2.connect(
+            host=DB_HOST,
+            dbname=DB_NAME,
+            user=DB_USERNAME,
+            password=DB_PASSWORD,
+            port=str(DB_PORT)
+        )
+        print("Connected to the database successfully")
+        return connection
+    except Error as e:
+        print(f"Error: {e}")
+        return None
 
 
 def fetch_posts(cursor):
