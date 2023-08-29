@@ -1,0 +1,5 @@
+COMPANY_URL = 'https://www.linkedin.com/company'
+JOBS_SEARCH_URL = 'https://www.linkedin.com/jobs/search'
+JOB_API_URL = 'https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search'
+JOB_LINK_URL = 'https://www.linkedin.com/jobs/view/'
+JOB_POSTING_URL = 'https://www.linkedin.com/jobs-guest/jobs/api/jobPosting/'

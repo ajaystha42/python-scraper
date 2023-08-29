@@ -1,7 +1,6 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 **/__pycache__/
-**/migrations/__pycache__/
 *.py[cod]
 
 
@@ -11,3 +10,5 @@ __pycache__/
 *.so
 
 *.csv
+
+.env*

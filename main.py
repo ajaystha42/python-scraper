@@ -1,15 +1,16 @@
-from selenium.webdriver.common.by import By
 import re
-import pandas as pd
-import config.config as config
-import jobs_importer
-import job_scraper
-import config.database as database
+import pytz
+from datetime import datetime, timedelta
+from selenium.webdriver.common.by import By
 from apscheduler.schedulers.blocking import BlockingScheduler
 
+import setup.setup as setup
+import constants.urls as urls
+import utils.scraper as scraper
+import utils.importer as importer
+import utils.database as database
+import constants.companies as companies_list
 
-from datetime import datetime, timedelta
-import pytz
 '''
 Url 1 : https://www.linkedin.com/jobs/search?keywords=Netflix&location=&geoId=&f_TPR=r604800&trk=public_jobs_jobs-search-bar_search-submit&position=1&pageNum=0
 
@@ -25,22 +26,20 @@ geoId=92000000 for WORLDWIDE
 by default USA
 
 '''
-companies = ['netflix', 'warner-bros--entertainment', 'marvel-studios']
 
 
 def main():
     try:
-        database_conn = config.create_connection()
-        if database_conn is not None:
-            driver = config.setup_driver()
-            session = config.setup_requests()
+        db_conn = setup.database()
+        if db_conn is not None:
+            driver = setup.driver()
+            session = setup.request()
             total_jobs = list()
-            url = 'https://www.linkedin.com/company'
-            for company in companies:
+            for company in companies_list.companies:
                 try:
                     print(
-                        f'Fetching Total Job Postings of : {company.capitalize()}')
-                    driver.get(f'{url}/{company}/')
+                        f'Fetching Total Job Postings of {company.capitalize()}')
+                    driver.get(f'{urls.COMPANY_URL}/{company}/')
 
                     modal_close_button = driver.find_element(
                         "xpath", "//button[@aria-label='Dismiss']")
@@ -53,7 +52,7 @@ def main():
                     if company_tag:
                         if match:
                             f_c_value = match.group(1)
-                            jobids = jobs_importer.import_jobs(
+                            jobids = importer.import_jobs(
                                 f_c_value, session)
                             if len(jobids) > 0:
                                 total_jobs.append(jobids)
@@ -64,17 +63,17 @@ def main():
             if len(total_jobs) > 0:
                 jobs = [
                     element for inner_array in total_jobs for element in inner_array]
-                cursor = database_conn.cursor()
+                cursor = db_conn.cursor()
                 posts = database.fetch_posts(cursor)
                 results = [job for job in jobs if job not in posts]
                 if len(results) == 0:
                     print('No jobs to scrape')
                     return
-                job_details = job_scraper.fetch_job_infos(results, session)
+                job_details = scraper.fetch_job_infos(results, session)
 
                 # inserting imported jobs in post table
                 database.insert_jobs(cursor, job_details)
-                database_conn.commit()
+                db_conn.commit()
 
                 # Creating CSV File
                 # df = pd.DataFrame(job_details)
@@ -84,7 +83,7 @@ def main():
                 # print(len(job_details), ' jobs imported.')
 
                 cursor.close()
-                database_conn.close()
+                db_conn.close()
     except:
         print('Error Occured.')
         return None
@@ -93,17 +92,12 @@ def main():
 if __name__ == "__main__":
     scheduler = BlockingScheduler()
     main()
-    scheduler.add_job(main, 'interval', minutes=15)  # Schedule every 5 minutes
+    scheduler.add_job(main, 'interval', minutes=5)  # Schedule every 5 minutes
     scheduler.start()
 
     # scheduler = BlockingScheduler(timezone=pytz.timezone('US/Eastern'))
-
-    # # Calculate the next 12 AM and 12 PM times in EST
     # now = datetime.now(tz=pytz.timezone('US/Eastern'))
     # next_12am = now.replace(hour=0, minute=0, second=0,
     #                         microsecond=0) + timedelta(days=1)
-    # next_12pm = now.replace(hour=12, minute=0, second=0, microsecond=0)
-
-    # # Schedule the main function to run at 12 AM and 12 PM EST
     # scheduler.add_job(main, 'date', run_date=next_12am)
-    # scheduler.add_job(main, 'date', run_date=next_12pm)
+    # scheduler.start()

@@ -3,22 +3,22 @@ from bs4 import BeautifulSoup
 import time
 import json
 import re
+import constants.urls as urls
 
 
 def fetch_job_infos(jobs, session):
     job_details = []
-    link_url = 'https://www.linkedin.com/jobs/view/'
 
     for id in jobs:
         data_arr = list()
         id = str(id)
         print(f'Fetching info for job id : {id}')
-        job_url = f'https://www.linkedin.com/jobs-guest/jobs/api/jobPosting/{id}'
+        job_posting_url = urls.JOB_POSTING_URL + id
         # Bright Data Configuration
         # session = config.setup_requests()
         # res = session.get(target_url)
         try:
-            res = session.get(job_url)
+            res = session.get(job_posting_url)
             if res.status_code == 429:
                 # If you receive a 429 status code, sleep for a while before retrying
                 # Default to 5 seconds
@@ -86,11 +86,11 @@ def fetch_job_infos(jobs, session):
                         # collapsed_text = '\n'.join(lines)
                         formatted_title = f'Job Title : **{title}**'
                         formatted_company = f'Company : **{company}**'
-                        formatted_linkedin_imported_text = f'***JOB IMPORTED FROM LINKEDIN***'
+                        formatted_linkedin_imported_text = '***JOB IMPORTED FROM LINKEDIN***'
 
                         data = formatted_linkedin_imported_text + '\n' + \
                             formatted_company + '\n' + formatted_title + '\n' + \
-                            collapsed_text + '\n' + link_url + id
+                            collapsed_text + '\n' + urls.JOB_LINK_URL + id
                         data_arr.append(data)
                         data_arr.append(json.dumps({'job_id': id}))
                         # obj['image'] = image_url
